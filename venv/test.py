@@ -16,7 +16,7 @@ class Algorithm(object):
         pass
     def currancy_value(self,value='XBT',count=1):
         start_time=time.time()
-        time.sleep(2.2)
+        time.sleep(2.05)
         price_response = requests.get(
             f'https://testnet.bitmex.com/api/v1/trade?symbol={value}&filter=%7B%22side%22%3A%22Sell%22%7D&count={count}&reverse=true').json()
         return (time.time()-start_time),price_response[0]['price'],
@@ -29,13 +29,14 @@ class Algorithm(object):
         return buf
 
     def analysis(self):
-        price, time = self.currancy_value()
+        time,price = self.currancy_value()
         self.price_mas, self.time_mas = [price] , [0]
         while True:
-            price,time=self.currancy_value()
+            time,price=self.currancy_value()
             self.price_mas.append(price)
-            self.time_mas.append(time+self.time_mas[-1])
 
+            self.time_mas.append(time+self.time_mas[-1])
+            #print(self.price_mas,self.time_mas)
             if len(self.price_mas)>1:
                 try:
                     first_proizvod_mas
@@ -44,7 +45,9 @@ class Algorithm(object):
 
                 else:
                     first_proizvod_mas.append(self.first_proizvod(self.price_mas,self.time_mas))
-                    print('первая производная = ',first_proizvod_mas)
+                    if abs(first_proizvod_mas[-1])>0:
+                        print('первая производная = ',first_proizvod_mas[-1])
+                    #print('dt',self.time_mas[-1]-self.time_mas[-2])
 
                     if len(first_proizvod_mas)>1:
 
@@ -55,7 +58,11 @@ class Algorithm(object):
 
                         else:
                             second_proizvod_mas.append(self.second_proizvod(self.price_mas, self.time_mas))
-                            print('вторая производная = ',second_proizvod_mas)
+                            if abs(first_proizvod_mas[-1])>0:
+                                print('вторая производная = ',second_proizvod_mas[-1])
+ #       if len(self.price_mas)>2:
+
+
 class Grafic(Algorithm):
     def __init__(self):
         pass
